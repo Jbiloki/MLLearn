@@ -48,32 +48,41 @@ import numpy as np
 import pylab as pl
 import mlp
 #Process data once, uncomment to process
-#preprocessForrestFireData('forestfires.csv', 'firesarranged.data')
+preprocessForrestFireData('forestfires.csv', 'firesarranged.data')
 
 
 def trainData():
 	with open('firesarranged.data') as f:
 		numCol = len(f.readline().split())
-	fireData = np.loadtxt('firesarranged.data', dtype='S',delimiter=',',skiprows = 1, usecols = range(12)).astype(np.float)
-	targets = np.loadtxt('firesarranged.data', dtype='S', delimiter=',', skiprows = 1, usecols = range(12,13)).astype(np.float)
-	targets = np.reshape(targets,(517,1))
+	fireData = np.loadtxt('firesarranged.data', dtype='S',delimiter=',',skiprows = 1, usecols = range(13)).astype(np.float)
+	fireData[:,:13] = fireData[:,:13]-fireData[:,:13].mean(axis=0)
+	#print(np.shape(fireData), np.shape(targets))
+	imax = np.concatenate((fireData.max(axis=0)*np.ones((1,13)), np.abs(fireData.min(axis=0))*np.ones((1,13))), axis=0).max(axis=0)
+	#targets[:,:1] = targets[:,:1]-targets[:,:1].mean(axis=0)
+	#imax2 = np.concatenate((targets.max(axis=0)*np.ones((1)), np.abs(targets.min(axis=0))*np.ones((1))), axis=0).max(axis=0)
+	fireData[:,:13] = fireData[:,:13]/imax[:13]
+	#targets	[:,:1] = targets[:,:1]/imax2[:1]
 	#print(np.shape(fireData), np.shape(targets))
 	#pl.plot(fireData,targets,'.')
 	#pl.show()
-	train = fireData[0::2,:]
-	test = fireData[1::4,:]
-	valid = fireData[3::4,:]
-	
-	traintarget = targets[0::2,:]
-	testtarget = targets[1::4,:]
-	validtarget = targets[3::4,:]
+	np.random.shuffle(fireData)
+	print(imax)
+	#print("Item", fireData.item(233), "Target", targets.item(233))
+	print(np.shape(fireData[:,:12]))
+	train = fireData[0:258, 0:12]
+	traintarget = fireData[0:258, 0:13]
+	test = fireData[0:130,0:12]
+	testtarget = fireData[0:130,0:13]
+	valid = fireData[0:129,0:12]
+	validtarget = fireData[0:129,0:13]
 	
 
 	
-	net = mlp.mlp(train,traintarget,13,outtype='linear')
+	net = mlp.mlp(train,traintarget,6,outtype='linear')
+	net.mlptrain(train,traintarget,0.40,231)
 	#net.earlystopping(train,traintarget,valid,validtarget,0.1)
-	#net.confmat(test,testtarget)
-	net.mlptrain(train,traintarget,0.35,201)
+	net.confmat(test,testtarget)
+	
 
 
 trainData()
