@@ -70,6 +70,9 @@ class mlp:
             # Different types of output neurons
             if self.outtype == 'linear':
             	deltao = (self.outputs-targets)/self.ndata
+            	if(n == 5):
+            		print("outputs", self.outputs[254])
+            		print("targets", targets[254])
             elif self.outtype == 'logistic':
             	deltao = self.beta*(self.outputs-targets)*self.outputs*(1.0-self.outputs)
             elif self.outtype == 'softmax':
@@ -86,8 +89,8 @@ class mlp:
                 
             # Randomise order of inputs (not necessary for matrix-based calculation)
             #np.random.shuffle(change)
-            #inputs = inputs[change,:]
-            #targets = targets[change,:]
+            inputs = inputs[change,:]
+            targets = targets[change,:]
             
     def mlpfwd(self,inputs):
         """ Run the network forward """
@@ -96,10 +99,11 @@ class mlp:
         self.hidden = 1.0/(1.0+np.exp(-self.beta*self.hidden))
         self.hidden = np.concatenate((self.hidden,-np.ones((np.shape(inputs)[0],1))),axis=1)
 
-        outputs = np.dot(self.hidden,self.weights2);
-
+        outputs = np.dot(self.hidden,self.weights2)
+        #outputs = np.log(outputs)
         # Different types of output neurons
         if self.outtype == 'linear':
+        	#print(outputs)
         	return outputs
         elif self.outtype == 'logistic':
             return 1.0/(1.0+np.exp(-self.beta*outputs))
