@@ -75,18 +75,19 @@ def trainData():
 	#print(np.shape(fireData[:,:12]))
 	train = fireData[0:258, 0:12]
 	traintarget = fireData[0:258, 12:13]
-	test = fireData[0:130,0:12]
-	testtarget = fireData[0:130,12:13]
-	valid = fireData[0:129,0:12]
-	validtarget = fireData[0:129,12:13]
-	
+	test = fireData[258:388,0:12]
+	testtarget = fireData[258:388,12:13]
+	valid = fireData[388:518,0:12]
+	validtarget = fireData[388:518,12:13]
 
 	
 	#net = mlp.mlp(train,traintarget,105,outtype='linear')
 	#net.mlptrain(train,traintarget,0.1,1001)
 	net = mlp.mlp(train,traintarget,13,outtype='linear')
-	net.mlptrain(train,traintarget,.15,250)
-	#print(net.earlystopping(train,traintarget,valid,validtarget,0.1))
+	#net.mlptrain(train,traintarget,.15,250)
+	#net = mlp.mlp(traindata,traindatat,10,outtype='linear')
+	#net.mlptrain(traindata,traindatat,.4,1000)
+	net.earlystopping(train,traintarget,valid,validtarget,0.35)
 	#net.confmat(test,testtarget)
 	
 
