@@ -85,8 +85,8 @@ def trainData():
 	#net = mlp.mlp(train,traintarget,105,outtype='linear')
 	#net.mlptrain(train,traintarget,0.1,1001)
 	net = mlp.mlp(train,traintarget,13,outtype='linear')
-	net.mlptrain(train,traintarget,0.3,200)
-	print(net.earlystopping(train,traintarget,valid,validtarget,0.1))
+	net.mlptrain(train,traintarget,.15,250)
+	#print(net.earlystopping(train,traintarget,valid,validtarget,0.1))
 	#net.confmat(test,testtarget)
 	
 
