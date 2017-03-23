@@ -47,6 +47,8 @@ def preprocessForrestFireData(infile,outfile):
 import numpy as np
 import pylab as pl
 import mlp
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
 #Process data once, uncomment to process
 preprocessForrestFireData('forestfires.csv', 'firesarranged.data')
 
@@ -61,30 +63,41 @@ def trainData():
 	#targets[:,:1] = targets[:,:1]-targets[:,:1].mean(axis=0)
 	#imax2 = np.concatenate((targets.max(axis=0)*np.ones((1)), np.abs(targets.min(axis=0))*np.ones((1))), axis=0).max(axis=0)
 	#fireData[:,:13] = fireData[:,:13]/imax[:13]
-	print(np.shape(fireData))
-	print("Before", fireData)
-	fireData = fireData/fireData.max(axis=0)
-	print(fireData)
+	#print(np.shape(fireData))
+	#print("Before", fireData)
+	#print(fireData)
 	#targets	[:,:1] = targets[:,:1]/imax2[:1]
 	#print(np.shape(fireData), np.shape(targets))
 	#pl.plot(fireData,targets,'.')
 	#pl.show()
+	fireData[0:517,12:13] = np.log(fireData[0:517,12:13] + 1)
+	fireData = np.delete(fireData,np.where(fireData[0:517,12:13] == 0), 0)
+
+	#targets = fireData[0:517,12:13]
+	#print(np.shape(fireData[0:517,12:13]))
+	#print(np.shape(targets))
+	#fireData = fireData[0:517,12:13][fireData[0:517,12:13] > 0]
+	print(np.shape(fireData))
+	fireData = fireData/fireData.max(axis=0)
+	n, bins, patches = plt.hist(fireData, 50, facecolor='green', alpha=0.75,rwidth = 50)
+	
 	np.random.shuffle(fireData)
+	#plt.show()
 	#print(imax)
 	#print("Item", fireData.item(233), "Target", targets.item(233))
 	#print(np.shape(fireData[:,:12]))
-	train = fireData[0:258, 0:12]
-	traintarget = fireData[0:258, 12:13]
-	test = fireData[258:388,0:12]
-	testtarget = fireData[258:388,12:13]
-	valid = fireData[388:518,0:12]
-	validtarget = fireData[388:518,12:13]
+	train = fireData[0:135, 0:12]
+	traintarget = fireData[0:135, 12:13]
+	test = fireData[135:202,0:12]
+	testtarget = fireData[135:202,12:13]
+	valid = fireData[202:267,0:12]
+	validtarget = fireData[202:267,12:13]
 
 	
 	#net = mlp.mlp(train,traintarget,105,outtype='linear')
 	#net.mlptrain(train,traintarget,0.1,1001)
-	net = mlp.mlp(train,traintarget,13,outtype='linear')
-	#net.mlptrain(train,traintarget,.15,250)
+	net = mlp.mlp(train,traintarget,30,outtype='linear')
+	net.mlptrain(train,traintarget,.3,450)
 	#net = mlp.mlp(traindata,traindatat,10,outtype='linear')
 	#net.mlptrain(traindata,traindatat,.4,1000)
 	net.earlystopping(train,traintarget,valid,validtarget,0.35)

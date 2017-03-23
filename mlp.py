@@ -71,8 +71,8 @@ class mlp:
             if self.outtype == 'linear':
             	deltao = (self.outputs-targets)/self.ndata
             	if(n == 5):
-            		print("outputs", self.outputs[254])
-            		print("targets", targets[254])
+            		print("outputs", self.outputs[100])
+            		print("targets", targets[100])
             elif self.outtype == 'logistic':
             	deltao = self.beta*(self.outputs-targets)*self.outputs*(1.0-self.outputs)
             elif self.outtype == 'softmax':
