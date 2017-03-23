@@ -70,37 +70,38 @@ def trainData():
 	#print(np.shape(fireData), np.shape(targets))
 	#pl.plot(fireData,targets,'.')
 	#pl.show()
+	fireData = np.delete(fireData,np.where(fireData[0:517,12:13] <= 0),0)
 	fireData[0:517,12:13] = np.log(fireData[0:517,12:13] + 1)
-	fireData = np.delete(fireData,np.where(fireData[0:517,12:13] == 0), 0)
-
+	fireData = fireData/fireData.max(axis=0)
+	
 	#targets = fireData[0:517,12:13]
 	#print(np.shape(fireData[0:517,12:13]))
 	#print(np.shape(targets))
 	#fireData = fireData[0:517,12:13][fireData[0:517,12:13] > 0]
-	print(np.shape(fireData))
-	fireData = fireData/fireData.max(axis=0)
-	n, bins, patches = plt.hist(fireData, 50, facecolor='green', alpha=0.75,rwidth = 50)
+	#print(np.shape(fireData))
+	#print(np.amin(fireData[0:270,12:13]))
+	n, bins, patches = plt.hist(fireData[0:270,12:13], 50, facecolor='green', alpha=0.75,rwidth = 50)
 	
 	np.random.shuffle(fireData)
-	#plt.show()
+	plt.show()
 	#print(imax)
 	#print("Item", fireData.item(233), "Target", targets.item(233))
 	#print(np.shape(fireData[:,:12]))
-	train = fireData[0:135, 0:12]
+	train = fireData[0:135, 2:12]
 	traintarget = fireData[0:135, 12:13]
-	test = fireData[135:202,0:12]
+	test = fireData[135:202,2:12]
 	testtarget = fireData[135:202,12:13]
-	valid = fireData[202:267,0:12]
+	valid = fireData[202:267,2:12]
 	validtarget = fireData[202:267,12:13]
 
 	
 	#net = mlp.mlp(train,traintarget,105,outtype='linear')
 	#net.mlptrain(train,traintarget,0.1,1001)
-	net = mlp.mlp(train,traintarget,30,outtype='linear')
+	net = mlp.mlp(train,traintarget,15,outtype='linear')
 	net.mlptrain(train,traintarget,.3,450)
 	#net = mlp.mlp(traindata,traindatat,10,outtype='linear')
 	#net.mlptrain(traindata,traindatat,.4,1000)
-	net.earlystopping(train,traintarget,valid,validtarget,0.35)
+	net.earlystopping(train,traintarget,valid,validtarget,0.3)
 	#net.confmat(test,testtarget)
 	
 
